@@ -22,10 +22,10 @@
 
 // ORIGINAL FILES
 const files = [
-  "reference.wav",
-  "reference.wav",
-  "reference.wav",
-  "intruder.wav"
+  "reference.mp3",
+  "reference.mp3",
+  "reference.mp3",
+  "intruder.mp3"
 ];
 // RANDOMIZE ORDER
 files.sort(() => Math.random() - 0.5);
@@ -45,7 +45,7 @@ files.forEach((file, index) => {
     <p>Audio ${labels[index]}</p>
 
     <audio controls>
-      <source src="${file}" type="audio/wav">
+      <source src="${file}" type="audio/mpeg">
     </audio>
 
     <label>

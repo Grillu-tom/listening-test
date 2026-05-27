@@ -1,0 +1,129 @@
+<label>Your ID:</label>
+<input type="text" id="participant" placeholder="user001">
+
+<hr>
+
+<h2>Tetrade Test 1</h2>
+
+<p>Listen to the 4 excerpts and identify the odd one out.</p>
+
+<div id="audioContainer"></div>
+
+<br>
+
+<label>Optional comment:</label><br>
+<textarea id="comment1"></textarea>
+
+<hr>
+
+<button onclick="submitTest()">Submit</button>
+
+<script>
+
+// ORIGINAL FILES
+const files = [
+  "reference.wav",
+  "reference.wav",
+  "reference.wav",
+  "intruder.wav"
+];
+// RANDOMIZE ORDER
+files.sort(() => Math.random() - 0.5);
+
+// LABELS
+const labels = ["A", "B", "C", "D"];
+
+// CONTAINER
+const container =
+  document.getElementById("audioContainer");
+
+// CREATE AUDIO PLAYERS
+files.forEach((file, index) => {
+
+  container.innerHTML += `
+
+    <p>Audio ${labels[index]}</p>
+
+    <audio controls>
+      <source src="${file}" type="audio/wav">
+    </audio>
+
+    <label>
+      <input
+        type="radio"
+        name="tetrade1"
+        value="${labels[index]}"
+      >
+      ${labels[index]} is different
+    </label>
+
+    <br><br>
+
+  `;
+
+});
+
+async function submitTest() {
+
+  const participant =
+    document.getElementById("participant").value;
+
+  const oddOne =
+    document.querySelector(
+      'input[name="tetrade1"]:checked'
+    )?.value || "";
+
+  const comment =
+    document.getElementById("comment1").value;
+
+  const responses = {
+
+    "Tetrade_01_ODD_ONE": {
+      answer: oddOne,
+      chiave: "tetrade1"
+    },
+
+    // SAVE RANDOMIZED ORDER
+    "Tetrade_01_ORDER": {
+      answer: files.join(","),
+      chiave: "order"
+    },
+
+    ...(comment && {
+      "Tetrade_01_COMMENT": {
+        answer: comment,
+        chiave: "comment"
+      }
+    })
+
+  };
+
+  try {
+
+    await fetch(
+      "https://script.google.com/macros/s/AKfycbxZcnmbUs3bwtbBTu-e2Fw8ONPd6cBFNj5tUmCtEh7Og9pAZWzBxbYjG34Gmn_AsJpi/exec",
+      {
+        method: "POST",
+
+        mode: "no-cors",
+
+        body: new URLSearchParams({
+          participant: participant,
+          responses: JSON.stringify(responses)
+        })
+      }
+    );
+
+    alert("Responses sent!");
+
+  } catch(error) {
+
+    console.error(error);
+
+    alert("FETCH ERROR");
+
+  }
+
+}
+
+</script>

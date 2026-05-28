@@ -28,7 +28,9 @@ Audio A or Audio B matches the reference.
 
 <hr>
 
-<button onclick="submitTest()">Submit</button>
+<button id="submitButton" onclick="submitTest()">
+  Submit
+</button>
 
 <script>
 
@@ -41,10 +43,8 @@ const matchFile = "reference.wav";
 const differentFile = "intruder.wav";
 
 // =====================================
-// RANDOMIZE A/B
+// RANDOMLY ASSIGN MATCH TO A OR B
 // =====================================
-
-// RANDOMLY DECIDE WHETHER A OR B IS THE MATCH
 
 const matchIsA = Math.random() < 0.5;
 
@@ -106,14 +106,25 @@ comparisonFiles.forEach(item => {
 
 async function submitTest() {
 
+  // BUTTON CONTROL
+  const button =
+    document.getElementById("submitButton");
+
+  button.disabled = true;
+
+  button.innerText = "Sending...";
+
+  // PARTICIPANT
   const participant =
     document.getElementById("participant").value;
 
+  // SELECTED ANSWER
   const selected =
     document.querySelector(
       'input[name="comparison"]:checked'
     )?.value || "";
 
+  // COMMENT
   const comment =
     document.getElementById("comment1").value;
 
@@ -127,6 +138,7 @@ async function submitTest() {
   const isCorrect =
     selected === correctAnswer;
 
+  // RESPONSES OBJECT
   const responses = {
 
     "Reference_Test_SELECTED": {
@@ -162,6 +174,7 @@ async function submitTest() {
 
   };
 
+  // SEND
   try {
 
     await fetch(
@@ -178,11 +191,17 @@ async function submitTest() {
       }
     );
 
+    button.innerText = "Submitted ✓";
+
     alert("Responses sent!");
 
   } catch(error) {
 
     console.error(error);
+
+    button.disabled = false;
+
+    button.innerText = "Submit";
 
     alert("FETCH ERROR");
 

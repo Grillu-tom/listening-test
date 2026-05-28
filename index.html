@@ -6,8 +6,8 @@
 <h2>Reference Comparison Test</h2>
 
 <p>
-Listen to the reference first, then determine whether X or Y
-matches the reference.
+Listen to the reference first, then determine whether
+Audio A or Audio B matches the reference.
 </p>
 
 <!-- REFERENCE -->
@@ -33,21 +33,34 @@ matches the reference.
 <script>
 
 // =====================================
-// FILES
+// TRUE FILES
 // =====================================
 
-// TRUE MATCH
 const matchFile = "reference.wav";
 
-// DIFFERENT FILE
 const differentFile = "intruder.wav";
 
-// RANDOMIZE X/Y
+// =====================================
+// RANDOMIZE A/B
+// =====================================
+
 let comparisonFiles = [
-  { label: "X", file: matchFile, isMatch: true },
-  { label: "Y", file: differentFile, isMatch: false }
+  {
+    visibleLabel: "A",
+    hiddenIdentity: "MATCH",
+    file: matchFile,
+    isCorrect: true
+  },
+
+  {
+    visibleLabel: "B",
+    hiddenIdentity: "DIFFERENT",
+    file: differentFile,
+    isCorrect: false
+  }
 ];
 
+// RANDOMIZE ORDER
 comparisonFiles.sort(() => Math.random() - 0.5);
 
 // =====================================
@@ -61,19 +74,21 @@ comparisonFiles.forEach(item => {
 
   container.innerHTML += `
 
-    <h3>Audio ${item.label}</h3>
+    <h3>Audio ${item.visibleLabel}</h3>
 
     <audio controls>
       <source src="${item.file}" type="audio/wav">
     </audio>
 
+    <br><br>
+
     <label>
       <input
         type="radio"
         name="comparison"
-        value="${item.label}"
+        value="${item.visibleLabel}"
       >
-      ${item.label} matches the reference
+      ${item.visibleLabel} matches the reference
     </label>
 
     <br><br>
@@ -101,19 +116,19 @@ async function submitTest() {
 
   // FIND CORRECT ANSWER
   const correctItem =
-    comparisonFiles.find(item => item.isMatch);
+    comparisonFiles.find(item => item.isCorrect);
 
   const correctAnswer =
-    correctItem.label;
+    correctItem.visibleLabel;
 
   const isCorrect =
     selected === correctAnswer;
 
   const responses = {
 
-    "Reference_Test_ANSWER": {
+    "Reference_Test_SELECTED": {
       answer: selected,
-      chiave: "comparison"
+      chiave: "selected"
     },
 
     "Reference_Test_CORRECT": {
@@ -121,12 +136,16 @@ async function submitTest() {
       chiave: "score"
     },
 
-    "Reference_Test_ORDER": {
+    // SAVE HIDDEN ORDER
+    "Reference_Test_MAPPING": {
       answer:
         comparisonFiles
-          .map(item => `${item.label}:${item.file}`)
+          .map(
+            item =>
+              `${item.visibleLabel}:${item.hiddenIdentity}`
+          )
           .join(","),
-      chiave: "order"
+      chiave: "mapping"
     },
 
     ...(comment && {

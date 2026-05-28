@@ -44,24 +44,27 @@ const differentFile = "intruder.wav";
 // RANDOMIZE A/B
 // =====================================
 
+// RANDOMLY DECIDE WHETHER A OR B IS THE MATCH
+
+const matchIsA = Math.random() < 0.5;
+
 let comparisonFiles = [
+
   {
     visibleLabel: "A",
-    hiddenIdentity: "MATCH",
-    file: matchFile,
-    isCorrect: true
+    hiddenIdentity: matchIsA ? "MATCH" : "DIFFERENT",
+    file: matchIsA ? matchFile : differentFile,
+    isCorrect: matchIsA
   },
 
   {
     visibleLabel: "B",
-    hiddenIdentity: "DIFFERENT",
-    file: differentFile,
-    isCorrect: false
+    hiddenIdentity: matchIsA ? "DIFFERENT" : "MATCH",
+    file: matchIsA ? differentFile : matchFile,
+    isCorrect: !matchIsA
   }
-];
 
-// RANDOMIZE ORDER
-comparisonFiles.sort(() => Math.random() - 0.5);
+];
 
 // =====================================
 // CREATE PLAYERS

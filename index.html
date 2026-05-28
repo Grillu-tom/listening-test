@@ -3,11 +3,23 @@
 
 <hr>
 
-<h2>Tetrade Test 1</h2>
+<h2>Reference Comparison Test</h2>
 
-<p>Listen to the 4 excerpts and identify the odd one out.</p>
+<p>
+Listen to the reference first, then determine whether X or Y
+matches the reference.
+</p>
 
-<div id="audioContainer"></div>
+<!-- REFERENCE -->
+<h3>Reference</h3>
+
+<audio controls>
+  <source src="reference.wav" type="audio/wav">
+</audio>
+
+<hr>
+
+<div id="comparisonContainer"></div>
 
 <br>
 
@@ -20,41 +32,48 @@
 
 <script>
 
-// ORIGINAL FILES
-const files = [
-  "reference.wav",
-  "reference.wav",
-  "reference.wav",
-  "intruder.wav"
+// =====================================
+// FILES
+// =====================================
+
+// TRUE MATCH
+const matchFile = "reference.wav";
+
+// DIFFERENT FILE
+const differentFile = "intruder.wav";
+
+// RANDOMIZE X/Y
+let comparisonFiles = [
+  { label: "X", file: matchFile, isMatch: true },
+  { label: "Y", file: differentFile, isMatch: false }
 ];
-// RANDOMIZE ORDER
-files.sort(() => Math.random() - 0.5);
 
-// LABELS
-const labels = ["A", "B", "C", "D"];
+comparisonFiles.sort(() => Math.random() - 0.5);
 
-// CONTAINER
+// =====================================
+// CREATE PLAYERS
+// =====================================
+
 const container =
-  document.getElementById("audioContainer");
+  document.getElementById("comparisonContainer");
 
-// CREATE AUDIO PLAYERS
-files.forEach((file, index) => {
+comparisonFiles.forEach(item => {
 
   container.innerHTML += `
 
-    <p>Audio ${labels[index]}</p>
+    <h3>Audio ${item.label}</h3>
 
     <audio controls>
-      <source src="${file}" type="audio/wav">
+      <source src="${item.file}" type="audio/wav">
     </audio>
 
     <label>
       <input
         type="radio"
-        name="tetrade1"
-        value="${labels[index]}"
+        name="comparison"
+        value="${item.label}"
       >
-      ${labels[index]} is different
+      ${item.label} matches the reference
     </label>
 
     <br><br>
@@ -63,37 +82,60 @@ files.forEach((file, index) => {
 
 });
 
+// =====================================
+// SUBMIT
+// =====================================
+
 async function submitTest() {
 
   const participant =
     document.getElementById("participant").value;
 
-  const oddOne =
+  const selected =
     document.querySelector(
-      'input[name="tetrade1"]:checked'
+      'input[name="comparison"]:checked'
     )?.value || "";
 
   const comment =
     document.getElementById("comment1").value;
 
+  // FIND CORRECT ANSWER
+  const correctItem =
+    comparisonFiles.find(item => item.isMatch);
+
+  const correctAnswer =
+    correctItem.label;
+
+  const isCorrect =
+    selected === correctAnswer;
+
   const responses = {
 
-    "Tetrade_01_ODD_ONE": {
-      answer: oddOne,
-      chiave: "tetrade1"
+    "Reference_Test_ANSWER": {
+      answer: selected,
+      chiave: "comparison"
     },
 
-    // SAVE RANDOMIZED ORDER
-    "Tetrade_01_ORDER": {
-      answer: files.join(","),
+    "Reference_Test_CORRECT": {
+      answer: isCorrect,
+      chiave: "score"
+    },
+
+    "Reference_Test_ORDER": {
+      answer:
+        comparisonFiles
+          .map(item => `${item.label}:${item.file}`)
+          .join(","),
       chiave: "order"
     },
 
     ...(comment && {
-      "Tetrade_01_COMMENT": {
+
+      "Reference_Test_COMMENT": {
         answer: comment,
         chiave: "comment"
       }
+
     })
 
   };

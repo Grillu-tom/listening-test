@@ -13,9 +13,15 @@ Audio A or Audio B matches the reference.
 <!-- REFERENCE -->
 <h3>Reference</h3>
 
-<audio controls controlsList="nodownload noplaybackrate noremoteplayback">
+<audio id="referenceAudio">
   <source src="reference.wav" type="audio/wav">
 </audio>
+
+<button
+  id="playReference"
+  onclick="playOnce('referenceAudio','playReference')">
+  ▶ Listen to reference
+</button>
 
 <hr>
 
@@ -73,15 +79,21 @@ let comparisonFiles = [
 const container =
   document.getElementById("comparisonContainer");
 
-comparisonFiles.forEach(item => {
+comparisonFiles.forEach((item, index) => {
 
   container.innerHTML += `
 
     <h3>Audio ${item.visibleLabel}</h3>
 
-    <audio controls>
+    <audio id="audio_${index}">
       <source src="${item.file}" type="audio/wav">
     </audio>
+
+    <button
+      id="playBtn_${index}"
+      onclick="playOnce('audio_${index}','playBtn_${index}')">
+      ▶ Listen
+    </button>
 
     <br><br>
 
@@ -89,8 +101,7 @@ comparisonFiles.forEach(item => {
       <input
         type="radio"
         name="comparison"
-        value="${item.visibleLabel}"
-      >
+        value="${item.visibleLabel}">
       ${item.visibleLabel} matches the reference
     </label>
 
@@ -100,6 +111,16 @@ comparisonFiles.forEach(item => {
 
 });
 
+function playOnce(audioId, buttonId) {
+
+  const audio =
+    document.getElementById(audioId);
+
+  audio.currentTime = 0;
+
+  audio.play();
+
+}
 // =====================================
 // SUBMIT
 // =====================================

@@ -1,3 +1,85 @@
+<div id="introPage">
+
+  <h1>Reference Comparison Test</h1>
+
+  <p>
+    Thank you for participating in this listening experiment.
+  </p>
+
+  <p>
+    You will first listen to a reference excerpt, then determine
+    whether Audio A or Audio B matches the reference.
+  </p>
+
+  <h3>Participant Information</h3>
+
+  <label>Age:</label><br>
+  <input type="number" id="age" min="0" max="120">
+
+  <br><br>
+
+  <label>Listening device:</label><br>
+
+  <label>
+    <input type="radio" name="device" value="Headphones">
+    Headphones
+  </label>
+
+  <br>
+
+  <label>
+    <input type="radio" name="device" value="Speakers">
+    Speakers
+  </label>
+
+  <br><br>
+
+  <label>
+    Do you have experience playing a musical instrument?
+  </label><br>
+
+  <label>
+    <input
+      type="radio"
+      name="musician"
+      value="Yes"
+      onchange="toggleYears(true)">
+    Yes
+  </label>
+
+  <label>
+    <input
+      type="radio"
+      name="musician"
+      value="No"
+      onchange="toggleYears(false)">
+    No
+  </label>
+
+  <br><br>
+
+  <div id="yearsContainer" style="display:none;">
+
+    <label>How many years?</label><br>
+
+    <input
+      type="number"
+      id="yearsPractice"
+      min="0"
+      max="100">
+
+  </div>
+
+  <br>
+
+  <button onclick="startTest()">
+    Start Test
+  </button>
+
+</div>
+
+<div id="testPage" style="display:none;">
+  
 <label>Your ID:</label>
 <input type="text" id="participant" placeholder="user001">
 
@@ -34,12 +116,29 @@ Audio A or Audio B matches the reference.
   Submit
 </button>
 
+</div>
+
 <script>
 
 // =====================================
 // TRUE FILES
 // =====================================
+function toggleYears(show) {
 
+  document.getElementById(
+    "yearsContainer"
+  ).style.display =
+    show ? "block" : "none";
+
+}
+function startTest() {
+
+  document.getElementById("introPage").style.display = "none";
+
+  document.getElementById("testPage").style.display = "block";
+
+}
+  
 const matchFile = "reference.wav";
 
 const differentFile = "intruder.wav";
@@ -135,15 +234,29 @@ async function submitTest() {
   const participant =
     document.getElementById("participant").value;
 
+  const age =
+  document.getElementById("age").value;
+
+const device =
+  document.querySelector(
+    'input[name="device"]:checked'
+  )?.value || "";
+
+const musician =
+  document.querySelector(
+    'input[name="musician"]:checked'
+  )?.value || "";
+
+const yearsPractice =
+  document.getElementById(
+    "yearsPractice"
+  )?.value || "";
   // SELECTED ANSWER
   const selected =
     document.querySelector(
       'input[name="comparison"]:checked'
     )?.value || "";
 
-  // COMMENT
-  const comment =
-    document.getElementById("comment1").value;
 
   // FIND CORRECT ANSWER
   const correctItem =
@@ -156,9 +269,29 @@ async function submitTest() {
     selected === correctAnswer;
 
   // RESPONSES OBJECT
-  const responses = {
+const responses = {
 
-    "Reference_Test_SELECTED": {
+  "AGE": {
+    answer: age,
+    chiave: "demographics"
+  },
+
+  "DEVICE": {
+    answer: device,
+    chiave: "demographics"
+  },
+
+  "MUSICIAN": {
+    answer: musician,
+    chiave: "demographics"
+  },
+
+  "YEARS_PRACTICE": {
+    answer: yearsPractice,
+    chiave: "demographics"
+  },
+
+  "Reference_Test_SELECTED": {
       answer: selected,
       chiave: "selected"
     },
@@ -180,14 +313,6 @@ async function submitTest() {
       chiave: "mapping"
     },
 
-    ...(comment && {
-
-      "Reference_Test_COMMENT": {
-        answer: comment,
-        chiave: "comment"
-      }
-
-    })
 
   };
 

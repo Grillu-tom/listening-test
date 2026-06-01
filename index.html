@@ -11,6 +11,8 @@
     whether Audio A or Audio B matches the reference.
   </p>
 
+  <hr>
+
   <h3>Participant Information</h3>
 
   <label>Age:</label><br>
@@ -25,8 +27,6 @@
     Headphones
   </label>
 
-  <br>
-
   <label>
     <input type="radio" name="device" value="Speakers">
     Speakers
@@ -34,52 +34,37 @@
 
   <br><br>
 
-  <label>
-    Do you have experience playing a musical instrument?
-  </label><br>
+  <label>Do you have experience playing a musical instrument?</label><br>
 
   <label>
-    <input
-      type="radio"
-      name="musician"
-      value="Yes"
-      onchange="toggleYears(true)">
+    <input type="radio" name="musician" value="Yes" onchange="toggleInstrument(true)">
     Yes
   </label>
 
   <label>
-    <input
-      type="radio"
-      name="musician"
-      value="No"
-      onchange="toggleYears(false)">
+    <input type="radio" name="musician" value="No" onchange="toggleInstrument(false)">
     No
   </label>
 
   <br><br>
 
-  <div id="yearsContainer" style="display:none;">
+  <div id="instrumentDetails" style="display:none;">
 
     <label>How many years?</label><br>
-
-    <input
-      type="number"
-      id="yearsPractice"
-      min="0"
-      max="100">
+    <input type="number" id="yearsPractice" min="0" max="100">
 
   </div>
 
   <br>
 
-  <button onclick="startTest()">
+  <button id="startBtn" onclick="startTest()" disabled>
     Start Test
   </button>
 
 </div>
 
 <div id="testPage" style="display:none;">
-  
+
 <label>Your ID:</label>
 <input type="text" id="participant" placeholder="user001">
 
@@ -92,15 +77,13 @@ Listen to the reference first, then determine whether
 Audio A or Audio B matches the reference.
 </p>
 
-<!-- REFERENCE -->
 <h3>Reference</h3>
 
 <audio id="referenceAudio">
   <source src="reference.wav" type="audio/wav">
 </audio>
 
-<button
-  id="playReference"
+<button id="playReference"
   onclick="playOnce('referenceAudio','playReference')">
   ▶ Listen to reference
 </button>
@@ -108,7 +91,6 @@ Audio A or Audio B matches the reference.
 <hr>
 
 <div id="comparisonContainer"></div>
-
 
 <hr>
 
@@ -120,32 +102,72 @@ Audio A or Audio B matches the reference.
 
 <script>
 
-// =====================================
-// TRUE FILES
-// =====================================
-function toggleYears(show) {
+// =========================
+// INTRO LOGIC
+// =========================
 
-  document.getElementById(
-    "yearsContainer"
-  ).style.display =
+function startTest() {
+  document.getElementById("introPage").style.display = "none";
+  document.getElementById("testPage").style.display = "block";
+}
+
+function toggleInstrument(show) {
+
+  document.getElementById("instrumentDetails").style.display =
     show ? "block" : "none";
 
+  if (!show) {
+    document.getElementById("yearsPractice").value = "";
+  }
+
+  validateIntro();
 }
-function startTest() {
 
-  document.getElementById("introPage").style.display = "none";
+// =========================
+// VALIDATION
+// =========================
 
-  document.getElementById("testPage").style.display = "block";
+function validateIntro() {
 
+  const age = document.getElementById("age").value;
+
+  const device = document.querySelector('input[name="device"]:checked');
+  const musician = document.querySelector('input[name="musician"]:checked');
+
+  const years = document.getElementById("yearsPractice").value;
+
+  let valid = true;
+
+  if (!age) valid = false;
+  if (!device) valid = false;
+  if (!musician) valid = false;
+
+  if (musician?.value === "Yes") {
+    if (!years) valid = false;
+  }
+
+  document.getElementById("startBtn").disabled = !valid;
 }
-  
+
+// listeners
+document.getElementById("age").addEventListener("input", validateIntro);
+
+document.querySelectorAll('input[name="device"]').forEach(el =>
+  el.addEventListener("change", validateIntro)
+);
+
+document.querySelectorAll('input[name="musician"]').forEach(el =>
+  el.addEventListener("change", validateIntro)
+);
+
+document.getElementById("yearsPractice").addEventListener("input", validateIntro);
+
+// =========================
+// TRUE FILES
+// =========================
+
 const matchFile = "reference.wav";
-
 const differentFile = "intruder.wav";
-
-// =====================================
-// RANDOMLY ASSIGN MATCH TO A OR B
-// =====================================
 
 const matchIsA = Math.random() < 0.5;
 
@@ -167,12 +189,11 @@ let comparisonFiles = [
 
 ];
 
-// =====================================
-// CREATE PLAYERS
-// =====================================
+// =========================
+// UI
+// =========================
 
-const container =
-  document.getElementById("comparisonContainer");
+const container = document.getElementById("comparisonContainer");
 
 comparisonFiles.forEach((item, index) => {
 
@@ -184,8 +205,7 @@ comparisonFiles.forEach((item, index) => {
       <source src="${item.file}" type="audio/wav">
     </audio>
 
-    <button
-      id="playBtn_${index}"
+    <button id="playBtn_${index}"
       onclick="playOnce('audio_${index}','playBtn_${index}')">
       ▶ Listen
     </button>
@@ -193,139 +213,89 @@ comparisonFiles.forEach((item, index) => {
     <br><br>
 
     <label>
-      <input
-        type="radio"
-        name="comparison"
-        value="${item.visibleLabel}">
+      <input type="radio" name="comparison" value="${item.visibleLabel}">
       ${item.visibleLabel} matches the reference
     </label>
 
     <br><br>
 
   `;
-
 });
 
-function playOnce(audioId, buttonId) {
-
-  const audio =
-    document.getElementById(audioId);
-
+function playOnce(audioId) {
+  const audio = document.getElementById(audioId);
   audio.currentTime = 0;
-
   audio.play();
-
 }
-// =====================================
+
+// =========================
 // SUBMIT
-// =====================================
+// =========================
 
 async function submitTest() {
 
-  // BUTTON CONTROL
-  const button =
-    document.getElementById("submitButton");
-
+  const button = document.getElementById("submitButton");
   button.disabled = true;
-
   button.innerText = "Sending...";
 
-  // PARTICIPANT
-  const participant =
-    document.getElementById("participant").value;
+  const participant = document.getElementById("participant").value;
 
-  const age =
-  document.getElementById("age").value;
+  const age = document.getElementById("age").value;
 
-const device =
-  document.querySelector(
-    'input[name="device"]:checked'
-  )?.value || "";
+  const device =
+    document.querySelector('input[name="device"]:checked')?.value || "";
 
-const musician =
-  document.querySelector(
-    'input[name="musician"]:checked'
-  )?.value || "";
+  const musician =
+    document.querySelector('input[name="musician"]:checked')?.value || "";
 
-const yearsPractice =
-  document.getElementById(
-    "yearsPractice"
-  )?.value || "";
-  // SELECTED ANSWER
+  const yearsPractice =
+    document.getElementById("yearsPractice")?.value || "";
+
+  const hoursPractice =
+    document.getElementById("hoursPractice")?.value || "";
+
   const selected =
-    document.querySelector(
-      'input[name="comparison"]:checked'
-    )?.value || "";
+    document.querySelector('input[name="comparison"]:checked')?.value || "";
 
-
-  // FIND CORRECT ANSWER
   const correctItem =
     comparisonFiles.find(item => item.isCorrect);
 
-  const correctAnswer =
-    correctItem.visibleLabel;
+  const isCorrect = selected === correctItem.visibleLabel;
 
-  const isCorrect =
-    selected === correctAnswer;
+  const responses = {
 
-  // RESPONSES OBJECT
-const responses = {
+    AGE: { answer: age, chiave: "demographics" },
+    DEVICE: { answer: device, chiave: "demographics" },
+    MUSICIAN: { answer: musician, chiave: "demographics" },
+    YEARS_PRACTICE: { answer: yearsPractice, chiave: "demographics" },
+    HOURS_PRACTICE: { answer: hoursPractice, chiave: "demographics" },
 
-  "AGE": {
-    answer: age,
-    chiave: "demographics"
-  },
-
-  "DEVICE": {
-    answer: device,
-    chiave: "demographics"
-  },
-
-  "MUSICIAN": {
-    answer: musician,
-    chiave: "demographics"
-  },
-
-  "YEARS_PRACTICE": {
-    answer: yearsPractice,
-    chiave: "demographics"
-  },
-
-  "Reference_Test_SELECTED": {
+    Reference_Test_SELECTED: {
       answer: selected,
       chiave: "selected"
     },
 
-    "Reference_Test_CORRECT": {
+    Reference_Test_CORRECT: {
       answer: isCorrect,
       chiave: "score"
     },
 
-    // SAVE HIDDEN ORDER
-    "Reference_Test_MAPPING": {
-      answer:
-        comparisonFiles
-          .map(
-            item =>
-              `${item.visibleLabel}:${item.hiddenIdentity}`
-          )
-          .join(","),
+    Reference_Test_MAPPING: {
+      answer: comparisonFiles
+        .map(item => `${item.visibleLabel}:${item.hiddenIdentity}`)
+        .join(","),
       chiave: "mapping"
-    },
-
+    }
 
   };
 
-  // SEND
   try {
 
     await fetch(
       "https://script.google.com/macros/s/AKfycbxZcnmbUs3bwtbBTu-e2Fw8ONPd6cBFNj5tUmCtEh7Og9pAZWzBxbYjG34Gmn_AsJpi/exec",
       {
         method: "POST",
-
         mode: "no-cors",
-
         body: new URLSearchParams({
           participant: participant,
           responses: JSON.stringify(responses)
@@ -334,21 +304,17 @@ const responses = {
     );
 
     button.innerText = "Submitted ✓";
-
     alert("Responses sent!");
 
-  } catch(error) {
+  } catch (error) {
 
     console.error(error);
 
     button.disabled = false;
-
     button.innerText = "Submit";
 
     alert("FETCH ERROR");
-
   }
-
 }
 
 </script>

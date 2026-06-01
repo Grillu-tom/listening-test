@@ -73,7 +73,7 @@
 <div id="testPage" style="display:none;">
 
 <label>Your ID:</label>
-<input type="text" id="participant" placeholder="user001">
+<input type="text" id="participantTest" placeholder="user001">
 
 <hr>
 
@@ -91,7 +91,7 @@ Audio A or Audio B matches the reference.
 </audio>
 
 <button id="playReference"
-  onclick="playOnce('referenceAudio','playReference')">
+  onclick="playOnce('referenceAudio')">
   ▶ Listen to reference
 </button>
 
@@ -101,7 +101,7 @@ Audio A or Audio B matches the reference.
 
 <hr>
 
-<button id="submitButton" onclick="submitTest()">
+<button id="submitButton" onclick="submitTest()" disabled>
   Submit
 </button>
 
@@ -110,7 +110,7 @@ Audio A or Audio B matches the reference.
 <script>
 
 // =========================
-// INTRO LOGIC
+// NAVIGATION
 // =========================
 
 function startTest() {
@@ -119,7 +119,6 @@ function startTest() {
 }
 
 function toggleInstrument(show) {
-
   document.getElementById("instrumentDetails").style.display =
     show ? "block" : "none";
 
@@ -137,13 +136,9 @@ function toggleInstrument(show) {
 function validateIntro() {
 
   const participant = document.getElementById("participant").value;
-
   const age = document.getElementById("age").value;
-
   const device = document.querySelector('input[name="device"]:checked');
-
   const musician = document.querySelector('input[name="musician"]:checked');
-
   const years = document.getElementById("yearsPractice").value;
 
   let valid = true;
@@ -160,7 +155,7 @@ function validateIntro() {
   document.getElementById("startBtn").disabled = !valid;
 }
 
-// listeners
+// live validation
 document.getElementById("participant").addEventListener("input", validateIntro);
 document.getElementById("age").addEventListener("input", validateIntro);
 
@@ -175,7 +170,7 @@ document.querySelectorAll('input[name="musician"]').forEach(el =>
 document.getElementById("yearsPractice").addEventListener("input", validateIntro);
 
 // =========================
-// TRUE FILES
+// AUDIO FILES
 // =========================
 
 const matchFile = "reference.wav";
@@ -184,21 +179,18 @@ const differentFile = "intruder.wav";
 const matchIsA = Math.random() < 0.5;
 
 let comparisonFiles = [
-
   {
     visibleLabel: "A",
     hiddenIdentity: matchIsA ? "MATCH" : "DIFFERENT",
     file: matchIsA ? matchFile : differentFile,
     isCorrect: matchIsA
   },
-
   {
     visibleLabel: "B",
     hiddenIdentity: matchIsA ? "DIFFERENT" : "MATCH",
     file: matchIsA ? differentFile : matchFile,
     isCorrect: !matchIsA
   }
-
 ];
 
 // =========================
@@ -210,29 +202,42 @@ const container = document.getElementById("comparisonContainer");
 comparisonFiles.forEach((item, index) => {
 
   container.innerHTML += `
-
     <h3>Audio ${item.visibleLabel}</h3>
 
     <audio id="audio_${index}">
       <source src="${item.file}" type="audio/wav">
     </audio>
 
-    <button id="playBtn_${index}"
-      onclick="playOnce('audio_${index}','playBtn_${index}')">
+    <button onclick="playOnce('audio_${index}')">
       ▶ Listen
     </button>
 
     <br><br>
 
     <label>
-      <input type="radio" name="comparison" value="${item.visibleLabel}">
+      <input type="radio"
+        name="comparison"
+        value="${item.visibleLabel}"
+        onchange="checkSelection()">
       ${item.visibleLabel} matches the reference
     </label>
 
     <br><br>
-
   `;
 });
+
+// =========================
+// ENABLE SUBMIT ONLY IF CHOICE MADE
+// =========================
+
+function checkSelection() {
+  const selected = document.querySelector('input[name="comparison"]:checked');
+  document.getElementById("submitButton").disabled = !selected;
+}
+
+// =========================
+// AUDIO
+// =========================
 
 function playOnce(audioId) {
   const audio = document.getElementById(audioId);
@@ -250,18 +255,7 @@ async function submitTest() {
   button.disabled = true;
   button.innerText = "Sending...";
 
-  const participant = document.getElementById("participant").value;
-
-  const age = document.getElementById("age").value;
-
-  const device =
-    document.querySelector('input[name="device"]:checked')?.value || "";
-
-  const musician =
-    document.querySelector('input[name="musician"]:checked')?.value || "";
-
-  const yearsPractice =
-    document.getElementById("yearsPractice")?.value || "";
+  const participant = document.getElementById("participantTest").value;
 
   const selected =
     document.querySelector('input[name="comparison"]:checked')?.value || "";
@@ -272,11 +266,6 @@ async function submitTest() {
   const isCorrect = selected === correctItem.visibleLabel;
 
   const responses = {
-
-    AGE: { answer: age, chiave: "demographics" },
-    DEVICE: { answer: device, chiave: "demographics" },
-    MUSICIAN: { answer: musician, chiave: "demographics" },
-    YEARS_PRACTICE: { answer: yearsPractice, chiave: "demographics" },
 
     Reference_Test_SELECTED: {
       answer: selected,
@@ -294,7 +283,6 @@ async function submitTest() {
         .join(","),
       chiave: "mapping"
     }
-
   };
 
   try {
@@ -317,14 +305,10 @@ async function submitTest() {
   } catch (error) {
 
     console.error(error);
-
     button.disabled = false;
     button.innerText = "Submit";
-
     alert("FETCH ERROR");
   }
 }
-
-</script>
 
 </script>

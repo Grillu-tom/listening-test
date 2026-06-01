@@ -15,6 +15,13 @@
 
   <h3>Participant Information</h3>
 
+  <h4>Participant ID</h4>
+
+  <label>ID:</label><br>
+  <input type="text" id="participant" placeholder="user001">
+
+  <br><br>
+
   <label>Age:</label><br>
   <input type="number" id="age" min="0" max="120">
 
@@ -124,20 +131,24 @@ function toggleInstrument(show) {
 }
 
 // =========================
-// VALIDATION
+// VALIDATION (IMPORTANT)
 // =========================
 
 function validateIntro() {
 
+  const participant = document.getElementById("participant").value;
+
   const age = document.getElementById("age").value;
 
   const device = document.querySelector('input[name="device"]:checked');
+
   const musician = document.querySelector('input[name="musician"]:checked');
 
   const years = document.getElementById("yearsPractice").value;
 
   let valid = true;
 
+  if (!participant) valid = false;
   if (!age) valid = false;
   if (!device) valid = false;
   if (!musician) valid = false;
@@ -150,6 +161,7 @@ function validateIntro() {
 }
 
 // listeners
+document.getElementById("participant").addEventListener("input", validateIntro);
 document.getElementById("age").addEventListener("input", validateIntro);
 
 document.querySelectorAll('input[name="device"]').forEach(el =>
@@ -312,5 +324,7 @@ async function submitTest() {
     alert("FETCH ERROR");
   }
 }
+
+</script>
 
 </script>

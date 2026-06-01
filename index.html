@@ -15,8 +15,6 @@
 
   <h3>Participant Information</h3>
 
-  <h4>Participant ID</h4>
-
   <label>ID:</label><br>
   <input type="text" id="participant" placeholder="user001">
 
@@ -56,10 +54,8 @@
   <br><br>
 
   <div id="instrumentDetails" style="display:none;">
-
     <label>How many years?</label><br>
     <input type="number" id="yearsPractice" min="0" max="100">
-
   </div>
 
   <br>
@@ -70,10 +66,9 @@
 
 </div>
 
-<div id="testPage" style="display:none;">
+<!-- ================= TEST PAGE ================= -->
 
-<label>Your ID:</label>
-<input type="text" id="participantTest" placeholder="user001">
+<div id="testPage" style="display:none;">
 
 <hr>
 
@@ -90,8 +85,7 @@ Audio A or Audio B matches the reference.
   <source src="reference.wav" type="audio/wav">
 </audio>
 
-<button id="playReference"
-  onclick="playOnce('referenceAudio')">
+<button onclick="playOnce('referenceAudio')">
   ▶ Listen to reference
 </button>
 
@@ -130,7 +124,7 @@ function toggleInstrument(show) {
 }
 
 // =========================
-// VALIDATION (IMPORTANT)
+// VALIDATION INTRO
 // =========================
 
 function validateIntro() {
@@ -155,7 +149,7 @@ function validateIntro() {
   document.getElementById("startBtn").disabled = !valid;
 }
 
-// live validation
+// listeners
 document.getElementById("participant").addEventListener("input", validateIntro);
 document.getElementById("age").addEventListener("input", validateIntro);
 
@@ -194,7 +188,7 @@ let comparisonFiles = [
 ];
 
 // =========================
-// UI
+// BUILD UI
 // =========================
 
 const container = document.getElementById("comparisonContainer");
@@ -227,7 +221,7 @@ comparisonFiles.forEach((item, index) => {
 });
 
 // =========================
-// ENABLE SUBMIT ONLY IF CHOICE MADE
+// ENABLE SUBMIT ONLY IF A/B SELECTED
 // =========================
 
 function checkSelection() {
@@ -255,7 +249,7 @@ async function submitTest() {
   button.disabled = true;
   button.innerText = "Sending...";
 
-  const participant = document.getElementById("participantTest").value;
+  const participant = document.getElementById("participant").value;
 
   const selected =
     document.querySelector('input[name="comparison"]:checked')?.value || "";
@@ -309,6 +303,9 @@ async function submitTest() {
     button.innerText = "Submit";
     alert("FETCH ERROR");
   }
+}
+
+</script>
 }
 
 </script>

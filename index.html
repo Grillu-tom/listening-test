@@ -258,6 +258,29 @@ async function submitTest() {
     comparisonFiles.find(item => item.isCorrect);
 
   const isCorrect = selected === correctItem.visibleLabel;
+  const participant =
+  document.getElementById("participant").value;
+
+const age =
+  document.getElementById("age").value;
+
+const device =
+  document.querySelector(
+    'input[name="device"]:checked'
+  )?.value || "";
+
+const musician =
+  document.querySelector(
+    'input[name="musician"]:checked'
+  )?.value || "";
+
+const yearsPractice =
+  document.getElementById("yearsPractice").value || "";
+
+const selected =
+  document.querySelector(
+    'input[name="comparison"]:checked'
+  )?.value || "";
 
   const responses = {
 

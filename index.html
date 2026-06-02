@@ -1,63 +1,90 @@
-<label>ID:</label><br>
-<input type="text"
-       id="participant"
-       placeholder="user001"
-       oninput="validateIntro()">
+<div id="introPage">
 
-<br><br>
+  <h1>Reference Comparison Test</h1>
 
-<label>Age:</label><br>
-<input type="number"
-       id="age"
-       min="0"
-       max="120"
-       oninput="validateIntro()">
+  <p>
+    Thank you for participating in this listening experiment.
+  </p>
 
-<br><br>
+  <p>
+    You will first listen to a reference excerpt, then determine
+    whether Audio A or Audio B matches the reference.
+  </p>
 
-<label>
-  <input type="radio"
-         name="device"
-         value="Headphones"
-         onchange="validateIntro()">
-  Headphones
-</label>
+  <hr>
 
-<label>
-  <input type="radio"
-         name="device"
-         value="Speakers"
-         onchange="validateIntro()">
-  Speakers
-</label>
+  <h3>Participant Information</h3>
 
-<br><br>
-
-<label>
-  <input type="radio"
-         name="musician"
-         value="Yes"
-         onchange="toggleInstrument(true)">
-  Yes
-</label>
-
-<label>
-  <input type="radio"
-         name="musician"
-         value="No"
-         onchange="toggleInstrument(false)">
-  No
-</label>
-
-<br><br>
-
-<div id="instrumentDetails" style="display:none;">
-  <label>How many years?</label><br>
-  <input type="number"
-         id="yearsPractice"
-         min="0"
-         max="100"
+  <label>ID:</label><br>
+  <input type="text"
+         id="participant"
+         placeholder="user001"
          oninput="validateIntro()">
+
+  <br><br>
+
+  <label>Age:</label><br>
+  <input type="number"
+         id="age"
+         min="0"
+         max="120"
+         oninput="validateIntro()">
+
+  <br><br>
+
+  <label>
+    <input type="radio"
+           name="device"
+           value="Headphones"
+           onchange="validateIntro()">
+    Headphones
+  </label>
+
+  <label>
+    <input type="radio"
+           name="device"
+           value="Speakers"
+           onchange="validateIntro()">
+    Speakers
+  </label>
+
+  <br><br>
+
+  <label>
+    <input type="radio"
+           name="musician"
+           value="Yes"
+           onchange="toggleInstrument(true)">
+    Yes
+  </label>
+
+  <label>
+    <input type="radio"
+           name="musician"
+           value="No"
+           onchange="toggleInstrument(false)">
+    No
+  </label>
+
+  <br><br>
+
+  <div id="instrumentDetails" style="display:none;">
+    <label>How many years?</label><br>
+    <input type="number"
+           id="yearsPractice"
+           min="0"
+           max="100"
+           oninput="validateIntro()">
+  </div>
+
+  <br>
+
+  <button id="startBtn"
+          onclick="startTest()"
+          disabled>
+    Start Test
+  </button>
+
 </div>
 
 <!-- ================= TEST PAGE ================= -->

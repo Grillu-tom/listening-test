@@ -249,79 +249,82 @@ async function submitTest() {
   button.disabled = true;
   button.innerText = "Sending...";
 
-  const participant = document.getElementById("participant").value;
+  // Demographics
+  const participant =
+    document.getElementById("participant").value;
 
+  const age =
+    document.getElementById("age").value;
+
+  const device =
+    document.querySelector(
+      'input[name="device"]:checked'
+    )?.value || "";
+
+  const musician =
+    document.querySelector(
+      'input[name="musician"]:checked'
+    )?.value || "";
+
+  const yearsPractice =
+    document.getElementById("yearsPractice").value || "";
+
+  // Test answer
   const selected =
-    document.querySelector('input[name="comparison"]:checked')?.value || "";
+    document.querySelector(
+      'input[name="comparison"]:checked'
+    )?.value || "";
 
   const correctItem =
     comparisonFiles.find(item => item.isCorrect);
 
-  const isCorrect = selected === correctItem.visibleLabel;
-  const participant =
-  document.getElementById("participant").value;
-
-const age =
-  document.getElementById("age").value;
-
-const device =
-  document.querySelector(
-    'input[name="device"]:checked'
-  )?.value || "";
-
-const musician =
-  document.querySelector(
-    'input[name="musician"]:checked'
-  )?.value || "";
-
-const yearsPractice =
-  document.getElementById("yearsPractice").value || "";
-
-const selected =
-  document.querySelector(
-    'input[name="comparison"]:checked'
-  )?.value || "";
+  const isCorrect =
+    selected === correctItem.visibleLabel;
 
   const responses = {
 
-  AGE: {
-    answer: age,
-    chiave: "demographics"
-  },
+    AGE: {
+      answer: age,
+      chiave: "demographics"
+    },
 
-  DEVICE: {
-    answer: device,
-    chiave: "demographics"
-  },
+    DEVICE: {
+      answer: device,
+      chiave: "demographics"
+    },
 
-  MUSICIAN: {
-    answer: musician,
-    chiave: "demographics"
-  },
+    MUSICIAN: {
+      answer: musician,
+      chiave: "demographics"
+    },
 
-  YEARS_PRACTICE: {
-    answer: yearsPractice,
-    chiave: "demographics"
-  },
+    YEARS_PRACTICE: {
+      answer: yearsPractice,
+      chiave: "demographics"
+    },
 
-  Reference_Test_SELECTED: {
-    answer: selected,
-    chiave: "selected"
-  },
+    Reference_Test_SELECTED: {
+      answer: selected,
+      chiave: "selected"
+    },
 
-  Reference_Test_CORRECT: {
-    answer: isCorrect,
-    chiave: "score"
-  },
+    Reference_Test_CORRECT: {
+      answer: isCorrect,
+      chiave: "score"
+    },
 
-  Reference_Test_MAPPING: {
-    answer: comparisonFiles
-      .map(item => `${item.visibleLabel}:${item.hiddenIdentity}`)
-      .join(","),
-    chiave: "mapping"
-  }
+    Reference_Test_MAPPING: {
+      answer: comparisonFiles
+        .map(item =>
+          `${item.visibleLabel}:${item.hiddenIdentity}`
+        )
+        .join(","),
+      chiave: "mapping"
+    }
 
-};
+  };
+
+  console.log(responses); // utile pour vérifier
 
   try {
 
@@ -343,10 +346,11 @@ const selected =
   } catch (error) {
 
     console.error(error);
+
     button.disabled = false;
     button.innerText = "Submit";
+
     alert("FETCH ERROR");
   }
 }
-
 </script>

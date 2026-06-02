@@ -1,69 +1,63 @@
-<div id="introPage">
+<label>ID:</label><br>
+<input type="text"
+       id="participant"
+       placeholder="user001"
+       oninput="validateIntro()">
 
-  <h1>Reference Comparison Test</h1>
+<br><br>
 
-  <p>
-    Thank you for participating in this listening experiment.
-  </p>
+<label>Age:</label><br>
+<input type="number"
+       id="age"
+       min="0"
+       max="120"
+       oninput="validateIntro()">
 
-  <p>
-    You will first listen to a reference excerpt, then determine
-    whether Audio A or Audio B matches the reference.
-  </p>
+<br><br>
 
-  <hr>
+<label>
+  <input type="radio"
+         name="device"
+         value="Headphones"
+         onchange="validateIntro()">
+  Headphones
+</label>
 
-  <h3>Participant Information</h3>
+<label>
+  <input type="radio"
+         name="device"
+         value="Speakers"
+         onchange="validateIntro()">
+  Speakers
+</label>
 
-  <label>ID:</label><br>
-  <input type="text" id="participant" placeholder="user001">
+<br><br>
 
-  <br><br>
+<label>
+  <input type="radio"
+         name="musician"
+         value="Yes"
+         onchange="toggleInstrument(true)">
+  Yes
+</label>
 
-  <label>Age:</label><br>
-  <input type="number" id="age" min="0" max="120">
+<label>
+  <input type="radio"
+         name="musician"
+         value="No"
+         onchange="toggleInstrument(false)">
+  No
+</label>
 
-  <br><br>
+<br><br>
 
-  <label>Listening device:</label><br>
-
-  <label>
-    <input type="radio" name="device" value="Headphones">
-    Headphones
-  </label>
-
-  <label>
-    <input type="radio" name="device" value="Speakers">
-    Speakers
-  </label>
-
-  <br><br>
-
-  <label>Do you have experience playing a musical instrument?</label><br>
-
-  <label>
-    <input type="radio" name="musician" value="Yes" onchange="toggleInstrument(true)">
-    Yes
-  </label>
-
-  <label>
-    <input type="radio" name="musician" value="No" onchange="toggleInstrument(false)">
-    No
-  </label>
-
-  <br><br>
-
-  <div id="instrumentDetails" style="display:none;">
-    <label>How many years?</label><br>
-    <input type="number" id="yearsPractice" min="0" max="100">
-  </div>
-
-  <br>
-
-  <button id="startBtn" onclick="startTest()" disabled>
-    Start Test
-  </button>
-
+<div id="instrumentDetails" style="display:none;">
+  <label>How many years?</label><br>
+  <input type="number"
+         id="yearsPractice"
+         min="0"
+         max="100"
+         oninput="validateIntro()">
 </div>
 
 <!-- ================= TEST PAGE ================= -->
@@ -129,39 +123,34 @@ function toggleInstrument(show) {
 
 function validateIntro() {
 
-  const participant = document.getElementById("participant").value;
-  const age = document.getElementById("age").value;
-  const device = document.querySelector('input[name="device"]:checked');
-  const musician = document.querySelector('input[name="musician"]:checked');
-  const years = document.getElementById("yearsPractice").value;
+  const participant =
+    document.getElementById("participant").value.trim();
 
-  let valid = true;
+  const age =
+    document.getElementById("age").value;
 
-  if (!participant) valid = false;
-  if (!age) valid = false;
-  if (!device) valid = false;
-  if (!musician) valid = false;
+  const device =
+    document.querySelector('input[name="device"]:checked');
 
-  if (musician?.value === "Yes") {
-    if (!years) valid = false;
+  const musician =
+    document.querySelector('input[name="musician"]:checked');
+
+  const years =
+    document.getElementById("yearsPractice").value;
+
+  let valid =
+    participant !== "" &&
+    age !== "" &&
+    device !== null &&
+    musician !== null;
+
+  if (musician && musician.value === "Yes") {
+    valid = valid && years !== "";
   }
 
   document.getElementById("startBtn").disabled = !valid;
 }
 
-// listeners
-document.getElementById("participant").addEventListener("input", validateIntro);
-document.getElementById("age").addEventListener("input", validateIntro);
-
-document.querySelectorAll('input[name="device"]').forEach(el =>
-  el.addEventListener("change", validateIntro)
-);
-
-document.querySelectorAll('input[name="musician"]').forEach(el =>
-  el.addEventListener("change", validateIntro)
-);
-
-document.getElementById("yearsPractice").addEventListener("input", validateIntro);
 
 // =========================
 // AUDIO FILES

@@ -150,34 +150,33 @@ function toggleInstrument(show) {
 
 function validateIntro() {
 
-  alert("validateIntro appelée");
+  const participant = document.getElementById("participant")?.value.trim() || "";
+  const age = document.getElementById("age")?.value || "";
 
-  const participant =
-    document.getElementById("participant").value.trim();
+  const device = document.querySelector('input[name="device"]:checked');
+  const musician = document.querySelector('input[name="musician"]:checked');
 
-  const age =
-    document.getElementById("age").value;
+  const yearsPracticeEl = document.getElementById("yearsPractice");
+  const years = yearsPracticeEl ? yearsPracticeEl.value : "";
 
-  const device =
-    document.querySelector('input[name="device"]:checked');
+  let valid = true;
 
-  const musician =
-    document.querySelector('input[name="musician"]:checked');
+  // champs obligatoires
+  if (participant === "") valid = false;
+  if (age === "") valid = false;
+  if (!device) valid = false;
+  if (!musician) valid = false;
 
-  const years =
-    document.getElementById("yearsPractice").value;
-
-  let valid =
-    participant !== "" &&
-    age !== "" &&
-    device !== null &&
-    musician !== null;
-
+  // condition instrument
   if (musician && musician.value === "Yes") {
-    valid = valid && years !== "";
+    if (years === "") valid = false;
   }
 
-  document.getElementById("startBtn").disabled = !valid;
+  // bouton start
+  const startBtn = document.getElementById("startBtn");
+  if (startBtn) {
+    startBtn.disabled = !valid;
+  }
 }
 
 

@@ -261,23 +261,44 @@ async function submitTest() {
 
   const responses = {
 
-    Reference_Test_SELECTED: {
-      answer: selected,
-      chiave: "selected"
-    },
+  AGE: {
+    answer: age,
+    chiave: "demographics"
+  },
 
-    Reference_Test_CORRECT: {
-      answer: isCorrect,
-      chiave: "score"
-    },
+  DEVICE: {
+    answer: device,
+    chiave: "demographics"
+  },
 
-    Reference_Test_MAPPING: {
-      answer: comparisonFiles
-        .map(item => `${item.visibleLabel}:${item.hiddenIdentity}`)
-        .join(","),
-      chiave: "mapping"
-    }
-  };
+  MUSICIAN: {
+    answer: musician,
+    chiave: "demographics"
+  },
+
+  YEARS_PRACTICE: {
+    answer: yearsPractice,
+    chiave: "demographics"
+  },
+
+  Reference_Test_SELECTED: {
+    answer: selected,
+    chiave: "selected"
+  },
+
+  Reference_Test_CORRECT: {
+    answer: isCorrect,
+    chiave: "score"
+  },
+
+  Reference_Test_MAPPING: {
+    answer: comparisonFiles
+      .map(item => `${item.visibleLabel}:${item.hiddenIdentity}`)
+      .join(","),
+    chiave: "mapping"
+  }
+
+};
 
   try {
 

@@ -150,43 +150,67 @@ function toggleInstrument(show) {
 
 function validateIntro() {
 
-  const participant = document.getElementById("participant")?.value.trim() || "";
-  const age = document.getElementById("age")?.value || "";
+  const participant =
+    document.getElementById("participant")?.value.trim() || "";
 
-  const device = document.querySelector('input[name="device"]:checked');
-  const musician = document.querySelector('input[name="musician"]:checked');
+  const age =
+    document.getElementById("age")?.value || "";
 
-  const yearsPracticeEl = document.getElementById("yearsPractice");
-  const years = yearsPracticeEl ? yearsPracticeEl.value : "";
+  const device =
+    document.querySelector('input[name="device"]:checked');
+
+  const musician =
+    document.querySelector('input[name="musician"]:checked');
+
+  const yearsPracticeEl =
+    document.getElementById("yearsPractice");
+
+  const years =
+    yearsPracticeEl ? yearsPracticeEl.value : "";
 
   let valid = true;
 
-  // champs obligatoires
   if (participant === "") valid = false;
   if (age === "") valid = false;
   if (!device) valid = false;
   if (!musician) valid = false;
 
-  // condition instrument
   if (musician && musician.value === "Yes") {
     if (years === "") valid = false;
   }
 
-  // bouton start
-  const startBtn = document.getElementById("startBtn");
-  if (startBtn) {
-    startBtn.disabled = !valid;
-  }
+  document.getElementById("startBtn").disabled = !valid;
 }
 
+// =========================
+// AUDIO FILES
+// =========================
+
+const matchFile = "reference.wav";
+const differentFile = "intruder.wav";
+
+const matchIsA = Math.random() < 0.5;
+
+const comparisonFiles = [
+  {
+    visibleLabel: "A",
+    hiddenIdentity: matchIsA ? "MATCH" : "DIFFERENT",
+    file: matchIsA ? matchFile : differentFile,
+    isCorrect: matchIsA
+  },
+  {
+    visibleLabel: "B",
+    hiddenIdentity: matchIsA ? "DIFFERENT" : "MATCH",
+    file: matchIsA ? differentFile : matchFile,
+    isCorrect: !matchIsA
+  }
+];
 
 // =========================
-// AUDIO
+// LIMITATION ECOUTES
 // =========================
 
 const MAX_PLAYS = 2;
-
-// compteur d'écoutes pour chaque audio
 const playCounts = {};
 
 function playOnce(audioId, buttonElement) {
@@ -195,14 +219,12 @@ function playOnce(audioId, buttonElement) {
     playCounts[audioId] = 0;
   }
 
-  // maximum atteint
   if (playCounts[audioId] >= MAX_PLAYS) {
     return;
   }
 
   const audio = document.getElementById(audioId);
 
-  // empêche plusieurs clics pendant la lecture
   if (!audio.paused) {
     return;
   }
@@ -242,7 +264,8 @@ function playOnce(audioId, buttonElement) {
 // BUILD UI
 // =========================
 
-const container = document.getElementById("comparisonContainer");
+const container =
+  document.getElementById("comparisonContainer");
 
 comparisonFiles.forEach((item, index) => {
 
@@ -254,13 +277,14 @@ comparisonFiles.forEach((item, index) => {
     </audio>
 
     <button onclick="playOnce('audio_${index}', this)">
-  ▶ Listen
-</button>
+      ▶ Listen
+    </button>
 
     <br><br>
 
     <label>
-      <input type="radio"
+      <input
+        type="radio"
         name="comparison"
         value="${item.visibleLabel}"
         onchange="checkSelection()">
@@ -272,22 +296,19 @@ comparisonFiles.forEach((item, index) => {
 });
 
 // =========================
-// ENABLE SUBMIT ONLY IF A/B SELECTED
+// ENABLE SUBMIT
 // =========================
 
 function checkSelection() {
-  const selected = document.querySelector('input[name="comparison"]:checked');
-  document.getElementById("submitButton").disabled = !selected;
-}
 
-// =========================
-// AUDIO
-// =========================
+  const selected =
+    document.querySelector(
+      'input[name="comparison"]:checked'
+    );
 
-function playOnce(audioId) {
-  const audio = document.getElementById(audioId);
-  audio.currentTime = 0;
-  audio.play();
+  document.getElementById(
+    "submitButton"
+  ).disabled = !selected;
 }
 
 // =========================
@@ -296,11 +317,12 @@ function playOnce(audioId) {
 
 async function submitTest() {
 
-  const button = document.getElementById("submitButton");
+  const button =
+    document.getElementById("submitButton");
+
   button.disabled = true;
   button.innerText = "Sending...";
 
-  // Demographics
   const participant =
     document.getElementById("participant").value;
 
@@ -318,16 +340,19 @@ async function submitTest() {
     )?.value || "";
 
   const yearsPractice =
-    document.getElementById("yearsPractice").value || "";
+    document.getElementById(
+      "yearsPractice"
+    ).value || "";
 
-  // Test answer
   const selected =
     document.querySelector(
       'input[name="comparison"]:checked'
     )?.value || "";
 
   const correctItem =
-    comparisonFiles.find(item => item.isCorrect);
+    comparisonFiles.find(
+      item => item.isCorrect
+    );
 
   const isCorrect =
     selected === correctItem.visibleLabel;
@@ -375,7 +400,7 @@ async function submitTest() {
 
   };
 
-  console.log(responses); // utile pour vérifier
+  console.log(responses);
 
   try {
 
@@ -392,6 +417,7 @@ async function submitTest() {
     );
 
     button.innerText = "Submitted ✓";
+
     alert("Responses sent!");
 
   } catch (error) {
@@ -404,4 +430,5 @@ async function submitTest() {
     alert("FETCH ERROR");
   }
 }
+
 </script>

@@ -1,3 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Reference Comparison Test</title>
+</head>
+
+<body>
+
+<!-- ================= INTRO ================= -->
+
 <div id="introPage">
 
   <h1>Reference Comparison Test</h1>
@@ -10,7 +21,7 @@
     You will first listen to a reference excerpt, then determine
     whether Audio A or Audio B matches the reference.
   </p>
-  
+
   <p style="font-weight:bold;">
     IMPORTANT: Each audio excerpt (Reference, Audio A and Audio B)
     can only be listened to twice.
@@ -21,89 +32,49 @@
   <h3>Participant Information</h3>
 
   <label>ID:</label><br>
-  <input type="text"
-         id="participant"
-         placeholder="user001"
-         oninput="validateIntro()">
-
-  <br><br>
+  <input type="text" id="participant" oninput="validateIntro()"><br><br>
 
   <label>Age:</label><br>
-  <input type="number"
-         id="age"
-         min="0"
-         max="120"
-         oninput="validateIntro()">
-
-  <br><br>
+  <input type="number" id="age" oninput="validateIntro()"><br><br>
 
   <label>
-    <input type="radio"
-           name="device"
-           value="Headphones"
-           onchange="validateIntro()">
-    Headphones
+    <input type="radio" name="device" value="Headphones" onchange="validateIntro()"> Headphones
   </label>
 
   <label>
-    <input type="radio"
-           name="device"
-           value="Speakers"
-           onchange="validateIntro()">
-    Speakers
+    <input type="radio" name="device" value="Speakers" onchange="validateIntro()"> Speakers
   </label>
 
   <br><br>
 
   <label>
-    <input type="radio"
-           name="musician"
-           value="Yes"
-           onchange="toggleInstrument(true)">
-    Yes
+    <input type="radio" name="musician" value="Yes" onchange="validateIntro()"> Yes
   </label>
 
   <label>
-    <input type="radio"
-           name="musician"
-           value="No"
-           onchange="toggleInstrument(false)">
-    No
+    <input type="radio" name="musician" value="No" onchange="validateIntro()"> No
   </label>
 
   <br><br>
 
   <div id="instrumentDetails" style="display:none;">
     <label>How many years?</label><br>
-    <input type="number"
-           id="yearsPractice"
-           min="0"
-           max="100"
-           oninput="validateIntro()">
+    <input type="number" id="yearsPractice" oninput="validateIntro()">
   </div>
 
   <br>
 
-  <button id="startBtn"
-          onclick="startTest()"
-          disabled>
-    Start Test
-  </button>
+  <button id="startBtn" onclick="startTest()" disabled>Start Test</button>
 
 </div>
 
-<!-- ================= TEST PAGE ================= -->
+<!-- ================= TEST ================= -->
 
 <div id="testPage" style="display:none;">
 
 <hr>
 
 <h2>Reference Comparison Test</h2>
-
-<p>
-Listen to the reference first, then determine whether
-Audio A or Audio B matches the reference.
-</p>
 
 <h3>Reference</h3>
 
@@ -121,319 +92,192 @@ Audio A or Audio B matches the reference.
 
 <hr>
 
-<button id="submitButton" onclick="submitTest()" disabled>
-  Submit
-</button>
+<button id="submitButton" onclick="submitTest()" disabled>Submit</button>
 
 </div>
 
 <script>
 
-// =========================
-// NAVIGATION
-// =========================
+// ================= DATA =================
+
+const trials = [
+  { intruder: "intruder1.wav" },
+  { intruder: "intruder2.wav" }
+];
+
+let currentTrial = 0;
+let results = [];
+let comparisonFiles = [];
+
+// ================= NAVIGATION =================
 
 function startTest() {
   document.getElementById("introPage").style.display = "none";
   document.getElementById("testPage").style.display = "block";
+  loadTrial();
 }
 
-function toggleInstrument(show) {
-  document.getElementById("instrumentDetails").style.display =
-    show ? "block" : "none";
-
-  if (!show) {
-    document.getElementById("yearsPractice").value = "";
-  }
-
-  validateIntro();
-}
-
-// =========================
-// VALIDATION INTRO
-// =========================
+// ================= INTRO VALIDATION =================
 
 function validateIntro() {
 
-  const participant =
-    document.getElementById("participant")?.value.trim() || "";
+  const participant = document.getElementById("participant").value.trim();
+  const age = document.getElementById("age").value;
 
-  const age =
-    document.getElementById("age")?.value || "";
+  const device = document.querySelector('input[name="device"]:checked');
+  const musician = document.querySelector('input[name="musician"]:checked');
 
-  const device =
-    document.querySelector('input[name="device"]:checked');
-
-  const musician =
-    document.querySelector('input[name="musician"]:checked');
-
-  const yearsPracticeEl =
-    document.getElementById("yearsPractice");
-
-  const years =
-    yearsPracticeEl ? yearsPracticeEl.value : "";
-
-  let valid = true;
-
-  if (participant === "") valid = false;
-  if (age === "") valid = false;
-  if (!device) valid = false;
-  if (!musician) valid = false;
-
-  if (musician && musician.value === "Yes") {
-    if (years === "") valid = false;
-  }
+  let valid = participant && age && device && musician;
 
   document.getElementById("startBtn").disabled = !valid;
 }
 
-// =========================
-// AUDIO FILES
-// =========================
-
-const matchFile = "reference.wav";
-const differentFile = "intruder.wav";
-
-const matchIsA = Math.random() < 0.5;
-
-const comparisonFiles = [
-  {
-    visibleLabel: "A",
-    hiddenIdentity: matchIsA ? "MATCH" : "DIFFERENT",
-    file: matchIsA ? matchFile : differentFile,
-    isCorrect: matchIsA
-  },
-  {
-    visibleLabel: "B",
-    hiddenIdentity: matchIsA ? "DIFFERENT" : "MATCH",
-    file: matchIsA ? differentFile : matchFile,
-    isCorrect: !matchIsA
-  }
-];
-
-// =========================
-// LIMITATION ECOUTES
-// =========================
+// ================= LIMIT AUDIO =================
 
 const MAX_PLAYS = 2;
 const playCounts = {};
 
-function playOnce(audioId, buttonElement) {
+function playOnce(audioId, btn) {
 
-  if (!playCounts[audioId]) {
-    playCounts[audioId] = 0;
-  }
+  if (!playCounts[audioId]) playCounts[audioId] = 0;
 
-  if (playCounts[audioId] >= MAX_PLAYS) {
-    return;
-  }
+  if (playCounts[audioId] >= MAX_PLAYS) return;
 
   const audio = document.getElementById(audioId);
 
-  if (!audio.paused) {
-    return;
-  }
+  if (!audio.paused) return;
 
   playCounts[audioId]++;
 
   audio.currentTime = 0;
   audio.play();
 
-  const remaining = MAX_PLAYS - playCounts[audioId];
+  const left = MAX_PLAYS - playCounts[audioId];
 
-  if (remaining > 0) {
+  btn.innerText = left > 0
+    ? `▶ Listen (${left})`
+    : "Max reached";
 
-    if (audioId === "referenceAudio") {
-      buttonElement.innerText =
-        `▶ Listen to reference (${remaining} left)`;
-    } else {
-      buttonElement.innerText =
-        `▶ Listen (${remaining} left)`;
-    }
-
-  } else {
-
-    buttonElement.disabled = true;
-
-    if (audioId === "referenceAudio") {
-      buttonElement.innerText =
-        "Reference listened twice";
-    } else {
-      buttonElement.innerText =
-        "Maximum reached";
-    }
-  }
+  if (left === 0) btn.disabled = true;
 }
 
-// =========================
-// BUILD UI
-// =========================
+// ================= LOAD TRIAL =================
 
-const container =
-  document.getElementById("comparisonContainer");
+function loadTrial() {
 
-comparisonFiles.forEach((item, index) => {
+  const trial = trials[currentTrial];
 
-  container.innerHTML += `
-    <h3>Audio ${item.visibleLabel}</h3>
+  const matchIsA = Math.random() < 0.5;
 
-    <audio id="audio_${index}">
-      <source src="${item.file}" type="audio/wav">
-    </audio>
+  comparisonFiles = [
+    {
+      label: "A",
+      file: matchIsA ? "reference.wav" : trial.intruder,
+      isCorrect: matchIsA
+    },
+    {
+      label: "B",
+      file: matchIsA ? trial.intruder : "reference.wav",
+      isCorrect: !matchIsA
+    }
+  ];
 
-    <button onclick="playOnce('audio_${index}', this)">
-      ▶ Listen
-    </button>
+  playCounts["audio_0"] = 0;
+  playCounts["audio_1"] = 0;
 
-    <br><br>
+  const container = document.getElementById("comparisonContainer");
+  container.innerHTML = "";
 
-    <label>
-      <input
-        type="radio"
-        name="comparison"
-        value="${item.visibleLabel}"
-        onchange="checkSelection()">
-      ${item.visibleLabel} matches the reference
-    </label>
+  comparisonFiles.forEach((item, i) => {
 
-    <br><br>
-  `;
-});
+    container.innerHTML += `
+      <h3>Audio ${item.label}</h3>
 
-// =========================
-// ENABLE SUBMIT
-// =========================
+      <audio id="audio_${i}">
+        <source src="${item.file}" type="audio/wav">
+      </audio>
+
+      <button onclick="playOnce('audio_${i}', this)">
+        ▶ Listen
+      </button>
+
+      <br><br>
+
+      <label>
+        <input type="radio" name="choice" value="${item.label}" onchange="checkSelection()">
+        ${item.label} matches reference
+      </label>
+
+      <br><br>
+    `;
+  });
+
+  document.getElementById("submitButton").disabled = true;
+}
+
+// ================= SELECTION =================
 
 function checkSelection() {
-
-  const selected =
-    document.querySelector(
-      'input[name="comparison"]:checked'
-    );
-
-  document.getElementById(
-    "submitButton"
-  ).disabled = !selected;
+  const sel = document.querySelector('input[name="choice"]:checked');
+  document.getElementById("submitButton").disabled = !sel;
 }
 
-// =========================
-// SUBMIT
-// =========================
+// ================= SUBMIT =================
 
-async function submitTest() {
+function submitTest() {
 
-  const button =
-    document.getElementById("submitButton");
+  const selected = document.querySelector('input[name="choice"]:checked')?.value;
 
-  button.disabled = true;
-  button.innerText = "Sending...";
+  const correct = comparisonFiles.find(c => c.isCorrect).label;
 
-  const participant =
-    document.getElementById("participant").value;
+  results.push({
+    trial: currentTrial + 1,
+    selected,
+    correct: selected === correct
+  });
 
-  const age =
-    document.getElementById("age").value;
+  currentTrial++;
 
-  const device =
-    document.querySelector(
-      'input[name="device"]:checked'
-    )?.value || "";
+  if (currentTrial < trials.length) {
+    loadTrial();
+    return;
+  }
 
-  const musician =
-    document.querySelector(
-      'input[name="musician"]:checked'
-    )?.value || "";
+  sendResults();
+}
 
-  const yearsPractice =
-    document.getElementById(
-      "yearsPractice"
-    ).value || "";
+// ================= SEND =================
 
-  const selected =
-    document.querySelector(
-      'input[name="comparison"]:checked'
-    )?.value || "";
+async function sendResults() {
 
-  const correctItem =
-    comparisonFiles.find(
-      item => item.isCorrect
-    );
+  const participant = document.getElementById("participant").value;
+  const age = document.getElementById("age").value;
+  const device = document.querySelector('input[name="device"]:checked')?.value;
+  const musician = document.querySelector('input[name="musician"]:checked')?.value;
+  const years = document.getElementById("yearsPractice")?.value || "";
 
-  const isCorrect =
-    selected === correctItem.visibleLabel;
-
-  const responses = {
-
-    AGE: {
-      answer: age,
-      chiave: "demographics"
-    },
-
-    DEVICE: {
-      answer: device,
-      chiave: "demographics"
-    },
-
-    MUSICIAN: {
-      answer: musician,
-      chiave: "demographics"
-    },
-
-    YEARS_PRACTICE: {
-      answer: yearsPractice,
-      chiave: "demographics"
-    },
-
-    Reference_Test_SELECTED: {
-      answer: selected,
-      chiave: "selected"
-    },
-
-    Reference_Test_CORRECT: {
-      answer: isCorrect,
-      chiave: "score"
-    },
-
-    Reference_Test_MAPPING: {
-      answer: comparisonFiles
-        .map(item =>
-          `${item.visibleLabel}:${item.hiddenIdentity}`
-        )
-        .join(","),
-      chiave: "mapping"
-    }
-
+  const payload = {
+    participant,
+    age,
+    device,
+    musician,
+    years,
+    results
   };
 
-  console.log(responses);
+  await fetch("https://script.google.com/macros/s/YOUR_SCRIPT_URL/exec", {
+    method: "POST",
+    mode: "no-cors",
+    body: new URLSearchParams({
+      participant,
+      responses: JSON.stringify(payload)
+    })
+  });
 
-  try {
-
-    await fetch(
-      "https://script.google.com/macros/s/AKfycbxZcnmbUs3bwtbBTu-e2Fw8ONPd6cBFNj5tUmCtEh7Og9pAZWzBxbYjG34Gmn_AsJpi/exec",
-      {
-        method: "POST",
-        mode: "no-cors",
-        body: new URLSearchParams({
-          participant: participant,
-          responses: JSON.stringify(responses)
-        })
-      }
-    );
-
-    button.innerText = "Submitted ✓";
-
-    alert("Responses sent!");
-
-  } catch (error) {
-
-    console.error(error);
-
-    button.disabled = false;
-    button.innerText = "Submit";
-
-    alert("FETCH ERROR");
-  }
+  alert("Thank you! Responses sent.");
 }
 
 </script>
+
+</body>
+</html>

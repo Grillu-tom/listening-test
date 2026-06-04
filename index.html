@@ -102,12 +102,9 @@
 
 <hr>
 
-<h2>Reference Comparison Test</h2>
+<h2>Listen to the reference first, then determine whether
+Audio A or Audio B matches the reference.</h2>
 
-<p>
-Listen to the reference first, then determine whether
-Audio A or Audio B matches the reference.
-</p>
 
 
 <audio id="referenceAudio">
@@ -115,7 +112,7 @@ Audio A or Audio B matches the reference.
 </audio>
 
 <button onclick="playOnce('referenceAudio', this)">
-  ▶ Listen to reference
+  ▶ Reference
 </button>
 
 <hr>
@@ -248,7 +245,7 @@ function playOnce(audioId, buttonElement) {
 
     if (audioId === "referenceAudio") {
       buttonElement.innerText =
-        `▶ Listen to reference (${remaining} left)`;
+        `▶ Reference (${remaining} left)`;
     } else {
       buttonElement.innerText =
         `▶ Listen (${remaining} left)`;
@@ -277,15 +274,13 @@ const container =
 
 comparisonFiles.forEach((item, index) => {
 
-  container.innerHTML += `
-    <h3>Audio ${item.visibleLabel}</h3>
 
     <audio id="audio_${index}">
       <source src="${item.file}" type="audio/wav">
     </audio>
 
     <button onclick="playOnce('audio_${index}', this)">
-      ▶ Listen
+      ▶ Audio ${item.visibleLabel}
     </button>
 
     <br><br>

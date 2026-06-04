@@ -251,22 +251,6 @@ let allResults = [];
 
 let comparisonFiles = [];
 
-const matchIsA = Math.random() < 0.5;
-
-const comparisonFiles = [
-  {
-    visibleLabel: "A",
-    hiddenIdentity: matchIsA ? "MATCH" : "DIFFERENT",
-    file: matchIsA ? matchFile : differentFile,
-    isCorrect: matchIsA
-  },
-  {
-    visibleLabel: "B",
-    hiddenIdentity: matchIsA ? "DIFFERENT" : "MATCH",
-    file: matchIsA ? differentFile : matchFile,
-    isCorrect: !matchIsA
-  }
-];
 
 // =========================
 // LIMITATION ECOUTES
@@ -330,41 +314,7 @@ function playOnce(audioId, buttonElement, label) {
   }
 }
 
-// =========================
-// BUILD UI
-// =========================
 
-const container =
-  document.getElementById("comparisonContainer");
-
-comparisonFiles.forEach((item, index) => {
-
-  container.innerHTML += `
-
-    <audio id="audio_${index}">
-      <source src="${item.file}" type="audio/wav">
-    </audio>
-
-    <button onclick="playOnce('audio_${index}', this, '${item.visibleLabel}')">
-  ▶ Audio ${item.visibleLabel}
-</button>
-
-    <br><br>
-
-    <label>
-      <input
-        type="radio"
-        name="comparison"
-        value="${item.visibleLabel}"
-        onchange="checkSelection()">
-      ${item.visibleLabel}
-    </label>
-
-    <br><br>
-
-  `;
-
-});
 // =========================
 // ENABLE SUBMIT
 // =========================
@@ -444,6 +394,22 @@ async function submitTest() {
       .join(",")
 
 });
+
+currentTrial++;
+
+if (currentTrial < trials.length) {
+
+  document.querySelector(
+    'input[name="comparison"]:checked'
+  ).checked = false;
+
+  buildTrial();
+
+  button.disabled = false;
+  button.innerText = "Submit";
+
+  return;
+}
   const responses = {
     ALL_RESULTS: {
       answer: JSON.stringify(allResults),

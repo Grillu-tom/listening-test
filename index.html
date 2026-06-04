@@ -274,6 +274,7 @@ const container =
 
 comparisonFiles.forEach((item, index) => {
 
+  container.innerHTML += `
 
     <audio id="audio_${index}">
       <source src="${item.file}" type="audio/wav">
@@ -295,9 +296,10 @@ comparisonFiles.forEach((item, index) => {
     </label>
 
     <br><br>
-  `;
-});
 
+  `;
+
+});
 // =========================
 // ENABLE SUBMIT
 // =========================

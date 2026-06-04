@@ -107,8 +107,84 @@ Audio A or Audio B matches the reference.</h2>
 // =========================
 
 function startTest() {
+
   document.getElementById("introPage").style.display = "none";
   document.getElementById("testPage").style.display = "block";
+
+  buildTrial();
+}
+
+function buildTrial() {
+
+  const intruder = trials[currentTrial];
+
+  const matchIsA = Math.random() < 0.5;
+
+  comparisonFiles = [
+
+    {
+      visibleLabel: "A",
+      hiddenIdentity: matchIsA ? "MATCH" : "DIFFERENT",
+      file: matchIsA ? "reference.wav" : intruder,
+      isCorrect: matchIsA
+    },
+
+    {
+      visibleLabel: "B",
+      hiddenIdentity: matchIsA ? "DIFFERENT" : "MATCH",
+      file: matchIsA ? intruder : "reference.wav",
+      isCorrect: !matchIsA
+    }
+
+  ];
+
+  const container =
+    document.getElementById("comparisonContainer");
+
+  container.innerHTML = "";
+
+  comparisonFiles.forEach((item, index) => {
+
+    container.innerHTML += `
+
+      <audio id="audio_${index}">
+        <source src="${item.file}" type="audio/wav">
+      </audio>
+
+      <button onclick="playOnce('audio_${index}', this, '${item.visibleLabel}')">
+        ▶ Audio ${item.visibleLabel}
+      </button>
+
+      <br><br>
+
+      <label>
+        <input
+          type="radio"
+          name="comparison"
+          value="${item.visibleLabel}"
+          onchange="checkSelection()">
+        ${item.visibleLabel}
+      </label>
+
+      <br><br>
+
+    `;
+  });
+
+  document.getElementById("submitButton").disabled = true;
+
+  // remise à zéro des écoutes
+  for (let key in playCounts) {
+    delete playCounts[key];
+  }
+
+  const refButton =
+    document.querySelector(
+      'button[onclick*="referenceAudio"]'
+    );
+
+  refButton.disabled = false;
+  refButton.innerText = "▶ Reference";
 }
 
 function toggleInstrument(show) {
@@ -164,8 +240,16 @@ function validateIntro() {
 // AUDIO FILES
 // =========================
 
-const matchFile = "reference.wav";
-const differentFile = "intruder.wav";
+const trials = [
+  "intruder1.wav",
+  "intruder2.wav"
+];
+
+let currentTrial = 0;
+
+let allResults = [];
+
+let comparisonFiles = [];
 
 const matchIsA = Math.random() < 0.5;
 
@@ -343,7 +427,28 @@ async function submitTest() {
   const isCorrect =
     selected === correctItem.visibleLabel;
 
+  allResults.push({
+
+  trial: currentTrial + 1,
+
+  intruder: trials[currentTrial],
+
+  selected: selected,
+
+  correct: isCorrect,
+
+  mapping:
+    comparisonFiles
+      .map(item =>
+        `${item.visibleLabel}:${item.hiddenIdentity}`)
+      .join(",")
+
+});
   const responses = {
+    ALL_RESULTS: {
+      answer: JSON.stringify(allResults),
+      chiave: "results"
+    },
 
     AGE: {
       answer: age,

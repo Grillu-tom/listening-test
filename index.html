@@ -136,6 +136,25 @@ function buildTrial() {
 
   const intruder = trials[currentTrial];
 
+  const matchIsA = Math.random() < 0.5;
+
+  comparisonFiles = [
+
+    {
+      visibleLabel: "A",
+      hiddenIdentity: matchIsA ? "MATCH" : "DIFFERENT",
+      file: matchIsA ? "reference.wav" : intruder,
+      isCorrect: matchIsA
+    },
+
+    {
+      visibleLabel: "B",
+      hiddenIdentity: matchIsA ? "DIFFERENT" : "MATCH",
+      file: matchIsA ? intruder : "reference.wav",
+      isCorrect: !matchIsA
+    }
+
+  ];
 
   const container =
     document.getElementById("comparisonContainer");
@@ -169,6 +188,21 @@ function buildTrial() {
 
     `;
   });
+
+  document.getElementById("submitButton").disabled = true;
+
+  for (let key in playCounts) {
+    delete playCounts[key];
+  }
+
+  const refButton =
+    document.querySelector(
+      'button[onclick*="referenceAudio"]'
+    );
+
+  refButton.disabled = false;
+  refButton.innerText = "▶ Reference";
+}
 
   document.getElementById("submitButton").disabled = true;
 

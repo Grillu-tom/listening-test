@@ -218,7 +218,7 @@ const comparisonFiles = [
 const MAX_PLAYS = 2;
 const playCounts = {};
 
-function playOnce(audioId, buttonElement) {
+function playOnce(audioId, buttonElement, label) {
 
   if (!playCounts[audioId]) {
     playCounts[audioId] = 0;
@@ -244,11 +244,15 @@ function playOnce(audioId, buttonElement) {
   if (remaining > 0) {
 
     if (audioId === "referenceAudio") {
+
       buttonElement.innerText =
         `▶ Reference (${remaining} left)`;
+
     } else {
+
       buttonElement.innerText =
-        `▶ 'audio_${index} (${remaining} left)`;
+        `▶ Audio ${label} (${remaining} left)`;
+
     }
 
   } else {
@@ -256,11 +260,15 @@ function playOnce(audioId, buttonElement) {
     buttonElement.disabled = true;
 
     if (audioId === "referenceAudio") {
+
       buttonElement.innerText =
         "Reference listened twice";
+
     } else {
+
       buttonElement.innerText =
-        "Maximum reached";
+        `Audio ${label} listened twice`;
+
     }
   }
 }
@@ -280,9 +288,9 @@ comparisonFiles.forEach((item, index) => {
       <source src="${item.file}" type="audio/wav">
     </audio>
 
-    <button onclick="playOnce('audio_${index}', this)">
-      ▶ Audio ${item.visibleLabel}
-    </button>
+    <button onclick="playOnce('audio_${index}', this, '${item.visibleLabel}')">
+  ▶ Audio ${item.visibleLabel}
+</button>
 
     <br><br>
 

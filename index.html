@@ -187,6 +187,7 @@ function buildTrial() {
       <br><br>
 
     `;
+
   });
 
   document.getElementById("submitButton").disabled = true;
@@ -200,24 +201,11 @@ function buildTrial() {
       'button[onclick*="referenceAudio"]'
     );
 
-  refButton.disabled = false;
-  refButton.innerText = "▶ Reference";
-}
-
-  document.getElementById("submitButton").disabled = true;
-
-  // remise à zéro des écoutes
-  for (let key in playCounts) {
-    delete playCounts[key];
+  if (refButton) {
+    refButton.disabled = false;
+    refButton.innerText = "▶ Reference";
   }
 
-  const refButton =
-    document.querySelector(
-      'button[onclick*="referenceAudio"]'
-    );
-
-  refButton.disabled = false;
-  refButton.innerText = "▶ Reference";
 }
 
 function toggleInstrument(show) {

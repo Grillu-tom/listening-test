@@ -1,101 +1,74 @@
 <div id="introPage">
 
-  <h1>Reference Comparison Test</h1>
+  <h1>Comparison between synthesized guitar sounds</h1>
 
+  <p>Thank you for participating in this listening experiment.</p>
+  <p>The test is supposed to last 15 minutes. The test is anonymous and the data will not be saved if you stop during the test. </p>
   <p>
-    Thank you for participating in this listening experiment.
-  </p>
-
-  <p>
-    You will first listen to a reference excerpt, then determine
-    whether Audio A or Audio B matches the reference.
-  </p>
-  
-  <p style="font-weight:bold;">
-    IMPORTANT: Each audio excerpt (Reference, Audio A and Audio B)
-    can only be listened to twice.
+    You will need to perceive the subtle differences between guitar sounds : make sure you are in a quiet environment.
   </p>
 
   <hr>
 
-  <h3>Participant Information</h3>
+  <h3>Participant information</h3>
 
-  <label>ID:</label><br>
-  <input type="text"
-         id="participant"
-         placeholder="user001"
-         oninput="validateIntro()">
+  <label>Pseudo:</label><br>
+  <input type="text" id="participant" placeholder="user001">
 
   <br><br>
 
   <label>Age:</label><br>
-  <input type="number"
-         id="age"
-         min="0"
-         max="120"
-         oninput="validateIntro()">
+  <input type="number" id="age" min="0" max="120">
 
   <br><br>
 
-<label><strong>What device are you using?</strong></label><br><br>
+  <label>Listening device:</label><br>
 
-<label>
-  <input type="radio"
-         name="device"
-         value="Headphones"
-         onchange="validateIntro()">
-  Headphones
-</label>
+  <label>
+    <input type="radio" name="device" value="Headphones">
+    Headphones
+  </label>
 
-<label>
-  <input type="radio"
-         name="device"
-         value="Speakers"
-         onchange="validateIntro()">
-  Speakers
-</label>
+  <label>
+    <input type="radio" name="device" value="Speakers">
+    Speakers
+  </label>
 
-<br><br><br>
+  <br><br>
 
-<label><strong>Are you a musician?</strong></label><br><br>
+  <label>Do you play a musical instrument?</label><br>
 
-<label>
-  <input type="radio"
-         name="musician"
-         value="Yes"
-         onchange="toggleInstrument(true)">
-  Yes
-</label>
+  <label>
+    <input type="radio" name="musician" value="Yes" onchange="toggleInstrument(true)">
+    Yes
+  </label>
 
-<label>
-  <input type="radio"
-         name="musician"
-         value="No"
-         onchange="toggleInstrument(false)">
-  No
-</label>
+  <label>
+    <input type="radio" name="musician" value="No" onchange="toggleInstrument(false)">
+    No
+  </label>
 
   <br><br>
 
   <div id="instrumentDetails" style="display:none;">
-    <label>How many years?</label><br>
-    <input type="number"
-           id="yearsPractice"
-           min="0"
-           max="100"
-           oninput="validateIntro()">
-  </div>
 
-  <br>
+  <label>Which instrument?</label><br>
+  <input type="text" id="instrument" placeholder="e.g. guitar, piano, violin">
 
-  <button id="startBtn"
-          onclick="startTest()"
-          disabled>
-    Start Test
-  </button>
+  <br><br>
+
+  <label>How many years?</label><br>
+  <input type="number" id="yearsPractice" min="0" max="100">
 
 </div>
 
+<br>
+
+<button id="startBtn" onclick="startTest()" disabled>
+  Start Test
+</button>
+
+</div>
 <!-- ================= TEST PAGE ================= -->
 
 <div id="testPage" style="display:none;">

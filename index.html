@@ -13,12 +13,21 @@
   <h3>Participant information</h3>
 
   <label>Pseudo:</label><br>
-  <input type="text" id="participant" placeholder="user001">
+  <input
+  type="text"
+  id="participant"
+  placeholder="user001"
+  oninput="validateIntro()">
 
   <br><br>
 
   <label>Age:</label><br>
-  <input type="number" id="age" min="0" max="120">
+  <input
+  type="number"
+  id="age"
+  min="0"
+  max="120"
+  oninput="validateIntro()">
 
   <br><br>
 
@@ -53,12 +62,21 @@
   <div id="instrumentDetails" style="display:none;">
 
   <label>Which instrument?</label><br>
-  <input type="text" id="instrument" placeholder="e.g. guitar, piano, violin">
+  <input
+  type="text"
+  id="instrument"
+  placeholder="e.g. guitar, piano, violin"
+  oninput="validateIntro()">
 
   <br><br>
 
   <label>How many years?</label><br>
-  <input type="number" id="yearsPractice" min="0" max="100">
+  <input
+  type="number"
+  id="yearsPractice"
+  min="0"
+  max="100"
+  oninput="validateIntro()">
 
 </div>
 
@@ -118,25 +136,6 @@ function buildTrial() {
 
   const intruder = trials[currentTrial];
 
-  const matchIsA = Math.random() < 0.5;
-
-  comparisonFiles = [
-
-    {
-      visibleLabel: "A",
-      hiddenIdentity: matchIsA ? "MATCH" : "DIFFERENT",
-      file: matchIsA ? "reference.wav" : intruder,
-      isCorrect: matchIsA
-    },
-
-    {
-      visibleLabel: "B",
-      hiddenIdentity: matchIsA ? "DIFFERENT" : "MATCH",
-      file: matchIsA ? intruder : "reference.wav",
-      isCorrect: !matchIsA
-    }
-
-  ];
 
   const container =
     document.getElementById("comparisonContainer");
@@ -192,8 +191,11 @@ function toggleInstrument(show) {
     show ? "block" : "none";
 
   if (!show) {
-    document.getElementById("yearsPractice").value = "";
-  }
+
+  document.getElementById("yearsPractice").value = "";
+
+  document.getElementById("instrument").value = "";
+}
 
   validateIntro();
 }
@@ -203,6 +205,9 @@ function toggleInstrument(show) {
 // =========================
 
 function validateIntro() {
+  
+  const instrument =
+  document.getElementById("instrument")?.value.trim() || "";
 
   const participant =
     document.getElementById("participant")?.value.trim() || "";
@@ -230,8 +235,11 @@ function validateIntro() {
   if (!musician) valid = false;
 
   if (musician && musician.value === "Yes") {
-    if (years === "") valid = false;
-  }
+
+  if (years === "") valid = false;
+
+  if (instrument === "") valid = false;
+}
 
   document.getElementById("startBtn").disabled = !valid;
 }
@@ -343,6 +351,9 @@ async function submitTest() {
   button.disabled = true;
   button.innerText = "Sending...";
 
+  const instrument =
+  document.getElementById("instrument")?.value || "";
+  
   const participant =
     document.getElementById("participant").value;
 
@@ -411,10 +422,35 @@ if (currentTrial < trials.length) {
   return;
 }
   const responses = {
-    ALL_RESULTS: {
-      answer: JSON.stringify(allResults),
-      chiave: "results"
-    },
+    TRIAL1_SELECTED: {
+  answer: allResults[0]?.selected || "",
+  chiave: "trial1"
+},
+
+TRIAL1_CORRECT: {
+  answer: allResults[0]?.correct || "",
+  chiave: "trial1"
+},
+
+TRIAL1_INTRUDER: {
+  answer: allResults[0]?.intruder || "",
+  chiave: "trial1"
+},
+
+TRIAL2_SELECTED: {
+  answer: allResults[1]?.selected || "",
+  chiave: "trial2"
+},
+
+TRIAL2_CORRECT: {
+  answer: allResults[1]?.correct || "",
+  chiave: "trial2"
+},
+
+TRIAL2_INTRUDER: {
+  answer: allResults[1]?.intruder || "",
+  chiave: "trial2"
+},
 
     AGE: {
       answer: age,
@@ -430,6 +466,11 @@ if (currentTrial < trials.length) {
       answer: musician,
       chiave: "demographics"
     },
+
+    INSTRUMENT: {
+  answer: instrument,
+  chiave: "demographics"
+},
 
     YEARS_PRACTICE: {
       answer: yearsPractice,

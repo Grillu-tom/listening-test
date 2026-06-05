@@ -463,7 +463,7 @@ if (currentTrial < trials.length) {
 },
 
 TRIAL1_CORRECT: {
-  answer: allResults[0]?.correct || "",
+  answer: allResults[0]?.correct ?? "",
   chiave: "trial1"
 },
 
@@ -478,7 +478,7 @@ TRIAL2_SELECTED: {
 },
 
 TRIAL2_CORRECT: {
-  answer: allResults[1]?.correct || "",
+  answer: allResults[1]?.correct ?? "",
   chiave: "trial2"
 },
 

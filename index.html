@@ -456,64 +456,53 @@ if (currentTrial < trials.length) {
 
   return;
 }
-  const responses = {
-    TRIAL1_SELECTED: {
-  answer: allResults[0]?.selected || "",
-  chiave: "trial1"
-},
+const responses = {};
 
-TRIAL1_CORRECT: {
-  answer: allResults[0]?.correct ?? "",
-  chiave: "trial1"
-},
+  allResults.forEach((result, index) => {
 
-TRIAL1_INTRUDER: {
-  answer: allResults[0]?.intruder || "",
-  chiave: "trial1"
-},
+  const trialNum = index + 1;
 
-TRIAL2_SELECTED: {
-  answer: allResults[1]?.selected || "",
-  chiave: "trial2"
-},
+  responses[`TRIAL${trialNum}_SELECTED`] = {
+    answer: result.selected,
+    chiave: `trial${trialNum}`
+  };
 
-TRIAL2_CORRECT: {
-  answer: allResults[1]?.correct ?? "",
-  chiave: "trial2"
-},
+  responses[`TRIAL${trialNum}_CORRECT`] = {
+    answer: result.correct,
+    chiave: `trial${trialNum}`
+  };
 
-TRIAL2_INTRUDER: {
-  answer: allResults[1]?.intruder || "",
-  chiave: "trial2"
-},
+  responses[`TRIAL${trialNum}_INTRUDER`] = {
+    answer: result.intruder,
+    chiave: `trial${trialNum}`
+  };
 
-    
-    AGE: {
-      answer: age,
-      chiave: "demographics"
-    },
+});
 
-    DEVICE: {
-      answer: device,
-      chiave: "demographics"
-    },
+responses.AGE = {
+  answer: age,
+  chiave: "demographics"
+};
 
-    MUSICIAN: {
-      answer: musician,
-      chiave: "demographics"
-    },
+responses.DEVICE = {
+  answer: device,
+  chiave: "demographics"
+};
 
-    INSTRUMENT: {
+responses.MUSICIAN = {
+  answer: musician,
+  chiave: "demographics"
+};
+
+responses.INSTRUMENT = {
   answer: instrument,
   chiave: "demographics"
-},
+};
 
-    YEARS_PRACTICE: {
-      answer: yearsPractice,
-      chiave: "demographics"
-    }
-
-  };
+responses.YEARS_PRACTICE = {
+  answer: yearsPractice,
+  chiave: "demographics"
+};
 
   console.log(responses);
 

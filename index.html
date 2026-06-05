@@ -90,7 +90,10 @@
 <!-- ================= TEST PAGE ================= -->
 
 <div id="testPage" style="display:none;">
-
+  
+<div id="trialCounter" style="font-weight:bold; margin-bottom:15px;">
+</div>
+  
 <hr>
 
 <h2>Listen to the reference first, then determine whether
@@ -133,7 +136,9 @@ function startTest() {
 }
 
 function buildTrial() {
-
+  document.getElementById("trialCounter").innerText =
+  `Trial ${currentTrial + 1}/${trials.length}`;
+  
   const intruder = trials[currentTrial];
 
   const matchIsA = Math.random() < 0.5;

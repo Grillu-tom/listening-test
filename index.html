@@ -127,12 +127,12 @@ Audio A or Audio B matches the reference.</h2>
 // NAVIGATION
 // =========================
 
-function startTest() {
+async function startTest() {
 
   document.getElementById("introPage").style.display = "none";
   document.getElementById("testPage").style.display = "block";
 
-  buildTrial();
+  await loadTrials();
 }
 
 function buildTrial() {
@@ -282,12 +282,15 @@ function shuffle(array) {
   }
   return array;
 }
-  
-const trials = shuffle([
-  "intruder1.wav",
-  "intruder2.wav",
-  "intruder3.wav"
-]);
+async function loadTrials() {
+
+  const response = await fetch("audio-list.json");
+
+  trials = shuffle(await response.json());
+
+  buildTrial();
+}  
+let trials = [];
 
 let currentTrial = 0;
 

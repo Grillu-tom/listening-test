@@ -515,7 +515,15 @@ responses.YEARS_PRACTICE = {
 };
 
   console.log(responses);
+if (allResults.length !== trials.length) {
+  alert(
+    `Missing answers: ${allResults.length}/${trials.length}`
+  );
 
+  button.disabled = false;
+  button.innerText = "Submit";
+  return;
+}
   try {
 
     await fetch(

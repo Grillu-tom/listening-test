@@ -136,9 +136,10 @@ async function startTest() {
 }
 
 function buildTrial() {
+
   document.getElementById("trialCounter").innerText =
-  `Trial ${currentTrial + 1}/${trials.length}`;
-  
+    `Trial ${currentTrial + 1}/${trials.length}`;
+
   const intruder = trials[currentTrial];
 
   const matchIsA = Math.random() < 0.5;
@@ -183,7 +184,7 @@ function buildTrial() {
       <label>
         <input
           type="radio"
-          name="comparison"
+          name="comparison_${currentTrial}"
           value="${item.visibleLabel}"
           onchange="checkSelection()">
         ${item.visibleLabel}
@@ -195,12 +196,18 @@ function buildTrial() {
 
   });
 
-  document.getElementById("submitButton").disabled = true;
+  // Toujours désactiver Submit au début du trial
+  const submitButton =
+    document.getElementById("submitButton");
 
+  submitButton.disabled = true;
+
+  // Réinitialiser tous les compteurs de lecture
   for (let key in playCounts) {
     delete playCounts[key];
   }
 
+  // Réinitialiser le bouton Reference
   const refButton =
     document.querySelector(
       'button[onclick*="referenceAudio"]'
@@ -370,12 +377,11 @@ function checkSelection() {
 
   const selected =
     document.querySelector(
-      'input[name="comparison"]:checked'
+      `input[name="comparison_${currentTrial}"]:checked`
     );
 
-  document.getElementById(
-    "submitButton"
-  ).disabled = !selected;
+  document.getElementById("submitButton").disabled =
+    !selected;
 }
 
 // =========================
@@ -384,8 +390,8 @@ function checkSelection() {
 
 async function submitTest() {
   const selectedRadio = document.querySelector(
-    'input[name="comparison"]:checked'
-  );
+  `input[name="comparison_${currentTrial}"]:checked`
+);
 
   if (!selectedRadio) {
     alert("Please select Audio A or Audio B.");
